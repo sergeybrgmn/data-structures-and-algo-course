@@ -1,0 +1,81 @@
+"""
+One of the mistake with recursion functions - 
+to forget to update the func name inside the recursive func!
+"""
+
+
+class Node(object):
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+
+class BinaryTree(object):
+    def __init__(self, root):
+        self.root = Node(root)
+
+    def search(self, find_val):
+        """Return True if the value
+        is in the tree, return
+        False otherwise."""
+        return self.postorder_search(self.root, find_val)
+
+    def print_tree(self):
+        """Print out all tree nodes
+        as they are visited in
+        a pre-order traversal."""
+        traversal = []
+        self.preorder_print(self.root, traversal)
+        return "-".join(traversal)
+
+    def preorder_search(self, start, find_val):
+        """Helper method - use this to create a 
+        recursive search solution."""
+        print("curr:", start.left, start.value )
+        if start.value == find_val:
+            print("there is a match with node", start.value)
+            return True
+        elif start.left:
+            print("No match, but there is a child for node", start.value)
+            return (self.preorder_search(start.left,find_val) or self.preorder_search(start.right,find_val))
+        else:
+            print("No match on the leaf", start.value)
+            return False
+
+    def postorder_search(self, start, find_val):
+        """Helper method - use this to create a 
+        recursive search solution."""     
+        if start.left:
+            l_or_r = (self.postorder_search(start.left,find_val) or self.postorder_search(start.right,find_val))
+            return (l_or_r or (start.value == find_val))      
+        else:
+            return (start.value == find_val)
+
+    def preorder_print(self, start, traversal):
+        """Helper method - use this to create a 
+        recursive print solution."""
+        traversal.append(str(start.value))
+        if start.left:
+            self.preorder_print(start.left,traversal)
+            self.preorder_print(start.right,traversal)
+        return traversal
+
+# Set up tree
+tree = BinaryTree(1)
+tree.root.left = Node(2)
+tree.root.right = Node(3)
+tree.root.left.left = Node(4)
+tree.root.left.right = Node(5)
+
+
+# Test search
+# Should be True
+print(tree.search(1))
+print(tree.search(5))
+# Should be False
+print(tree.search(6))
+
+# Test print_tree
+# Should be 1-2-4-5-3
+print(tree.print_tree())
